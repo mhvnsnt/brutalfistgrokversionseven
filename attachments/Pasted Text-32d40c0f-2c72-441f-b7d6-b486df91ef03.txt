@@ -1,0 +1,670 @@
+Worked for 16s
+
+Yes. And I want to frame Brutal Fist the way we actually intend to finish it, not as “the little web prototype that's in the repo today.”
+
+Also, I checked Seele specifically, because I think that's what you meant by “seeles AI.” Seele is explicitly designed to generate playable games, work with engine-specific projects, and export/download projects. Its documentation lists Three.js, Unity, Godot, and Unreal workflows. 
+
+What Brutal Fist actually is
+
+Brutal Fist is intended to be a complete 3D fighting/wrestling game built around the Schwarzerblitz engine, with the Bannon universe providing the actual fighter content.
+
+The important distinction:
+
+> Schwarzerblitz is the foundation. Bannon is the content source. Brutal Fist is the finished game.
+
+
+
+The browser/Next.js side we're building is not supposed to become the final game engine. It's the AI-accessible development/playtest cockpit and eventually a web-compatible runtime where appropriate.
+
+The repo already explicitly defines the two-runtime architecture: native Schwarzerblitz remains authoritative, while React/Three.js is the playable compatibility/preview target.
+
+
+---
+
+The finished game target
+
+I would give Seele this mental model:
+
+1. Boot
+
+Player launches Brutal Fist.
+
+Not a developer dashboard.
+
+Not a prototype screen.
+
+A real fighting game.
+
+Brutal Fist logo/title
+
+attract/title sequence
+
+menu
+
+settings
+
+controls
+
+graphics
+
+audio
+
+game modes
+
+
+The repo's baseline already defines title/attract, main menu, character select, versus loading, match initialization, rounds, combat, KO, rematch and return-to-menu as the target game loop.
+
+
+---
+
+2. Character roster
+
+This is where Bannon comes in.
+
+The goal isn't to invent fake fighters to make a screen look populated.
+
+The fighter database becomes a real shared game contract:
+
+Fighter
+
+ID
+
+name
+
+portrait
+
+biography
+
+stats
+
+fighting style
+
+moveset
+
+skeleton
+
+model
+
+animations
+
+hitboxes
+
+collision profile
+
+intro/outro
+
+voice/audio where available
+
+native resource mapping
+
+graphics resources
+
+validation status
+
+
+The repo already has the requirement that promoted fighters come from verified real Bannon GLB assets, with Bannon clips, bios, stats and portraits replacing placeholder content.
+
+So Seele shouldn't say:
+
+> “I'll make 12 cool fighter cards.”
+
+
+
+It should understand:
+
+> “Build the actual Brutal Fist roster system from the repository's fighter contracts and Bannon source data.”
+
+
+
+That's a huge difference.
+
+
+---
+
+3. Character Select
+
+The finished target should feel like an actual fighting game character select.
+
+Player sees:
+
+BRUTAL FIST
+
+SELECT FIGHTER
+
+Then actual Bannon fighters.
+
+Selecting one reveals:
+
+portrait
+
+model
+
+name
+
+bio
+
+fighting style
+
+attributes
+
+available moves
+
+animation readiness
+
+maybe alternate costumes later
+
+
+And the 3D model is the real fighter, not a generated substitute.
+
+The current Rocket task contract already calls for the real roster screen to be built from the Bannon fighter manifest.
+
+
+---
+
+4. Fighting system
+
+This is where I want Seele to understand that we're building a real fighting engine, not a Three.js animation demo.
+
+The intended system includes:
+
+Movement
+
+forward/backward
+
+lateral movement
+
+sidestep
+
+crouch
+
+guard
+
+stance
+
+facing
+
+turning
+
+spacing
+
+
+Combat
+
+light attacks
+
+heavy attacks
+
+strings
+
+startup
+
+active frames
+
+recovery
+
+hit reactions
+
+guard reactions
+
+knockdowns
+
+wake-up
+
+recovery
+
+throws
+
+grapples
+
+counters
+
+launches
+
+potentially juggling
+
+special attacks
+
+character-specific moves
+
+
+Physics/interaction
+
+collision
+
+hitboxes
+
+hurtboxes
+
+contact
+
+knockback
+
+grounded/airborne states
+
+stage boundaries
+
+
+And eventually:
+
+wrestling mechanics + fighting mechanics together.
+
+So Brutal Fist isn't merely:
+
+> punch → subtract health.
+
+
+
+It's supposed to become a deep combat system.
+
+
+---
+
+5. Animation system
+
+This is one of the biggest things we've already been building.
+
+The goal is:
+
+one canonical character/animation pipeline.
+
+Not:
+
+> “Bannon's left arm looks backwards, so rotate Bannon's arm 180 degrees.”
+
+
+
+We explicitly banned that kind of per-character hack.
+
+The pipeline has gates for:
+
+unified skin
+
+canonical skeleton
+
+canonical rest pose
+
+normalized bones
+
+retarget validation
+
+animation state mapping
+
+pose sampling
+
+mirrored-limb detection
+
+non-finite transform detection
+
+missing animation states
+
+
+The repository explicitly requires failed fighters to be marked invalid instead of silently falling back to procedural characters.
+
+That's important for Seele.
+
+The desired result
+
+You give Seele a new Bannon fighter.
+
+The system should automatically determine:
+
+Does this fighter actually satisfy the Brutal Fist character contract?
+
+If yes:
+
+> PROMOTED
+
+
+
+If no:
+
+> INVALID — missing canonical skeleton / animation / skin / etc.
+
+
+
+Not:
+
+> “Close enough, let's fake it.”
+
+
+
+
+---
+
+6. Graphics
+
+Our visual hierarchy is already established.
+
+Default
+
+PS1_3D
+
+Think:
+
+Tekken 3
+
+early Virtua Fighter
+
+Evil Zone
+
+low-poly 3D
+
+chunky geometry
+
+real 3D lighting
+
+polygonal fighters
+
+stylized textures
+
+
+Optional
+
+RETRO8
+
+The chunky 8-bit/pixel style we've experimented with.
+
+Future
+
+HIGH_RES
+
+Reserved for the higher-fidelity version.
+
+The repo explicitly says PS1_3D is the default, RETRO8 is optional, and HIGH_RES is future/reserved.
+
+So I would tell Seele:
+
+Do not reinterpret Brutal Fist as an 8-bit game just because it can make pixel games.
+
+
+---
+
+7. Arenas
+
+The finished target needs actual fighting environments.
+
+Not just a colored Three.js floor.
+
+Eventually:
+
+stages
+
+boundaries
+
+camera spaces
+
+stage geometry
+
+lighting
+
+environmental materials
+
+collision
+
+stage-specific presentation
+
+potentially destructible/interactable environments
+
+
+The architecture already calls for camera and stage-space parity between the web/native implementations.
+
+
+---
+
+8. Game modes
+
+The architecture leaves room for the real game to grow beyond the first versus loop.
+
+I'd have Seele build the game architecture so we can support:
+
+Core
+
+Arcade
+
+Versus
+
+Training
+
+Survival
+
+Time Attack
+
+
+Later
+
+Story
+
+Tournament
+
+Tag/team
+
+Wrestling-specific modes
+
+Boss encounters
+
+Unlockables
+
+Challenges
+
+
+We shouldn't make every mode fake just to populate menus.
+
+The menu should represent systems that actually exist.
+
+
+---
+
+9. Native engine
+
+This is the part I absolutely don't want Seele accidentally destroying.
+
+The repository contains the Schwarzerblitz engine as the native foundation.
+
+It is a native C++ engine with its own renderer/audio/runtime architecture. The repo preserves that engine as the authoritative native implementation.
+
+So the finished architecture is approximately:
+
+BRUTAL FIST
+                         │
+             ┌───────────┴───────────┐
+             │                       │
+       NATIVE GAME              AI / WEB COCKPIT
+             │                       │
+     Schwarzerblitz C++          Next.js / TS
+             │                       │
+             │                  Three.js/R3F
+             │                       │
+             └──────────┬────────────┘
+                        │
+                 SHARED CONTRACTS
+                        │
+        ┌───────────────┼────────────────┐
+        │               │                │
+      BANNON         ANIMATION        COMBAT
+      ROSTER          SYSTEM           DATA
+        │               │                │
+        └───────────────┼────────────────┘
+                        │
+                  BRUTAL FIST
+
+That is the ideal target.
+
+
+---
+
+And this is where Seele could be REALLY useful
+
+Seele's own documentation says it can create engine-specific projects and continue working from project files, rather than only generating disposable browser demos. It specifically lists Unreal, Unity, Godot and Three.js workflows. 
+
+So I would not ask Seele:
+
+> “Build me a fighting game.”
+
+
+
+I'd give it the existing repo and say:
+
+> “Turn this existing Brutal Fist codebase into the complete production game described by its architecture and documentation. Do not reinterpret it as a prototype.”
+
+
+
+Then give it the hierarchy above.
+
+
+---
+
+Can Seele push directly to GitHub?
+
+This is the part where I want to be precise.
+
+I could not find current official Seele documentation showing a native “connect GitHub repo → modify repo → push commits/PRs” workflow.
+
+What their official documentation currently advertises is:
+
+playable preview
+
+project files
+
+download/export
+
+engine-specific project generation
+
+publish/share
+
+API-based generation/iteration. 
+
+
+So I would not assume Seele can directly push to mhvnsnt/Brutal-Fist yet.
+
+But that does NOT mean it can't build the ability.
+
+There are two routes.
+
+
+---
+
+Route A — Seele generates the project → GitHub handles it
+
+Seele produces the updated project.
+
+Then we put it into GitHub.
+
+That's workable, but it's more manual.
+
+
+---
+
+Route B — give the AI an actual Git/GitHub agent
+
+This is what I prefer.
+
+Seele becomes the game-generation/game-building AI.
+
+A Git-capable coding agent becomes the repository operator.
+
+For example, the open-source Selesai coding agent is explicitly terminal-first, has filesystem/terminal tools, Git-backed recovery/checkpoints, and is designed to take software tasks through implementation and verification. 
+
+That gives us:
+
+YOU
+ │
+ │ "Build grappling system"
+ ▼
+SEELE
+ │
+ │ generates / develops game
+ ▼
+GAME PROJECT
+ │
+ ▼
+GIT/GITHUB AGENT
+ │
+ ├── inspect
+ ├── test
+ ├── commit
+ ├── push
+ └── PR
+ ▼
+mhvnsnt/Brutal-Fist
+
+That is much closer to the AI development factory you're trying to build.
+
+
+---
+
+And yes — we can build the missing GitHub ability
+
+If Seele itself doesn't have GitHub write access, we don't have to accept that limitation.
+
+We can build a GitHub bridge around it.
+
+For example:
+
+Seele
+   │
+   │ generated files / project
+   ▼
+Brutal Fist Agent Bridge
+   │
+   ├── git status
+   ├── git diff
+   ├── validation
+   ├── tests
+   ├── commit
+   ├── push
+   └── pull request
+   │
+   ▼
+GitHub
+
+And we can make the bridge enforce the rules:
+
+Never blindly overwrite main.
+
+Instead:
+
+main
+  │
+  ├── brutal-fist/seele-gameplay
+  │
+  ├── brutal-fist/seele-animation
+  │
+  └── brutal-fist/seele-ui
+             │
+             ▼
+          validation
+             │
+             ▼
+             PR
+             │
+             ▼
+           main
+
+That is actually better than giving an AI unrestricted direct access to main.
+
+
+---
+
+The really important part
+
+I don't want Seele to look at our current repo and conclude:
+
+> “Oh, this is a React fighting-game prototype. I'll make the React fighting-game prototype better.”
+
+
+
+That's the wrong target.
+
+I want its interpretation to be:
+
+> “This is the early web-accessible development surface of a full Brutal Fist fighting game whose native foundation is Schwarzerblitz, whose character/content source is Bannon, whose shared contracts define the roster/animation/combat systems, and whose browser runtime is a development/playable compatibility target. My job is to finish the game, not replace its architecture with another prototype.”
+
+
+
+That's the instruction we should give it.
+
+And the existing repository already contains the architecture and task contracts necessary to communicate that distinction.
+
+So yes: I think Seele is worth putting into the Brutal Fist AI workforce. But I would use it as the game-building agent, while we build/attach a GitHub-capable coding/commit layer if Seele doesn't provide native GitHub write access.
+
+And I would have that layer work against the actual repo we have now, not start a second independent Brutal Fist project.
